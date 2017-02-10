@@ -27,7 +27,7 @@ def get_args():
     parser.add_argument("filename", help="File that shall be parsed")
     parser.add_argument("-m", "--min-length", default=3, help="Minimum word length to parse")
     parser.add_argument("-p", "--processes", default=4, help="Number of processes")
-    parser.add_argument("-c", "--chunk_size", default=10, help="Size of chunks in MByte, that are read at once")
+    parser.add_argument("-c", "--chunk_size", default=1, help="Size of chunks in MByte, that are read at once")
     return parser.parse_args()
     
 def worker(nr, input_queue, mword_list):
