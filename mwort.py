@@ -16,7 +16,7 @@ import re
 musical_regex = re.compile(r'^([a-hs]|cis|dis|fis|gis)+$', flags=(re.IGNORECASE))
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
     filename="mwort.log",
     filemode='w'
@@ -40,11 +40,11 @@ def worker(nr, input_queue, mword_list):
             return
         else:
             chunk_nr, word_string = queue_item
-            logger.debug("Getting chunk "+str(chunk_nr)+" from queue")
+            logger.debug("Getting chunk {} from queue".format(chunk_nr))
             words = word_string.split()
-            logger.debug("Split chunk "+str(chunk_nr)+" in "+str(len(words))+" words")
+            logger.debug("Split chunk {} in {} words".format(chunk_nr, len(words)))
             mwords = [word for word in words if musical_regex.match(word)]
-            logger.debug("Got "+str(len(mwords))+ " musical words")
+            logger.debug("Got {} musical words".format(len(mwords)))
             mword_list.extend(mwords)
     
 def get_worker_pool(num, worker, input_queue, mword_list):
@@ -100,21 +100,21 @@ def main():
     if isfile(fname):
         fsize = getsize(fname) # Returns size in bytes
         with open(fname) as f:
-            print "Opened file", fname, "Size", "{:,}".format(fsize), "Bytes" 
+            print "Opened file {}, size {:,} bytes".format(fname, fsize) 
             chunks = fsize // chunk_size
             if fsize % chunk_size != 0:
                 chunks += 1
-            print "Splitting file in", chunks, "chunks of size", "{:,}".format(chunk_size), "Bytes"
+            print "Splitting file in {} chunks of size {:,} bytes".format(chunks, chunk_size)
             manager = Manager()
             mwords = manager.list()
             work = manager.Queue(processes)
-            print "Starting", processes, "processes..."
+            print "Starting {} processes...".format(processes)
             pool = get_worker_pool(processes, worker, work, mwords)
             
             for chunk_nr in trange(1, chunks+1):
                 chunk = get_chunk(f, chunk_size)
                 work.put((chunk_nr, chunk))
-                main_logger.debug("Working on chunk "+str(chunk_nr)+ " of "+str(chunks))
+                main_logger.debug("Working on chunk {} of {}".format(chunk_nr, chunk_size))
             
             for i in xrange(processes):
                 work.put(None) # Send termination signal for each process
@@ -128,7 +128,7 @@ def main():
                 print '{}: {} times'.format(k, v)
                                                                             
     else:
-        print "Can't find file", fname, ", exiting."
+        print "Can't find file {}, exiting.".format(fname)
 
 if __name__ == "__main__":
     main()
