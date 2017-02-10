@@ -43,9 +43,9 @@ def worker(nr, input_queue, mword_list):
             chunk_nr, word_string = queue_item
             logger.debug("Getting chunk {} from queue".format(chunk_nr))
             words = word_string.split()
-            logger.debug("Split chunk {} in {} words".format(chunk_nr, len(words)))
+            logger.debug("Split chunk {} in {} {word_des}".format(chunk_nr, len(words), word_des="word" if len(words) < 2 else "words"))
             mwords = [word for word in words if musical_regex.match(word)]
-            logger.debug("Got {} musical words".format(len(mwords)))
+            logger.debug("Got {} musical {word_des}".format(len(mwords), word_des="word" if len(words) < 2 else "words"))
             mword_list.extend(mwords)
     
 def get_worker_pool(num, worker, input_queue, mword_list):
@@ -105,11 +105,14 @@ def main():
             chunks = fsize // chunk_size
             if fsize % chunk_size != 0:
                 chunks += 1
-            print "Splitting file in {} chunks of size {:,} bytes".format(chunks, chunk_size)
+            if chunks == 1:
+                chunk_size = fsize
+                
+            print "Splitting file in {} {chunk_des} of size {:,} bytes".format(chunks, chunk_size, chunk_des="chunk" if chunks < 2 else "chunks")
             manager = Manager()
             mwords = manager.list()
             work = manager.Queue(processes)
-            print "Starting {} processes...".format(processes)
+            print "Starting {} {proc_des}...".format(processes, proc_des="process" if processes < 2 else "processes")
             pool = get_worker_pool(processes, worker, work, mwords)
             
             for chunk_nr in trange(1, chunks+1):
@@ -124,7 +127,7 @@ def main():
                 p.join()
                 
             mwords_count, mwords_unique, props = postprocess_list(mwords)
-            print 'Found {} musical words, {} of them unique'.format(props['total'], props['unique'])
+            print 'Found {} musical {word_des}, {} of them unique'.format(props['total'], props['unique'], word_des="word" if props['unique'] < 2 else "words")
             for k, v in mwords_count.items():
                 print '{}: {} times'.format(k, v)
                                                                             
