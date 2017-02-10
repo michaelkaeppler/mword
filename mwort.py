@@ -26,9 +26,9 @@ def get_args():
     parser = argparse.ArgumentParser()
     cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
-    parser.add_argument("-m", "--min-length", default=3, help="Minimum word length to parse")
-    parser.add_argument("-p", "--processes", default=cpus, help="Number of processes")
-    parser.add_argument("-c", "--chunk_size", default=1, help="Size of chunks in MByte, that are read at once")
+    parser.add_argument("-m", "--min-length", type=int, default=3, help="Minimum word length to parse")
+    parser.add_argument("-p", "--processes", type=int, default=cpus, help="Number of processes")
+    parser.add_argument("-c", "--chunk_size", type=int, default=100, help="Size of chunks in KByte, that are read at once")
     return parser.parse_args()
     
 def worker(nr, input_queue, mword_list):
@@ -94,7 +94,7 @@ def main():
     args = get_args()
     fname = args.filename
     processes = args.processes
-    chunk_size = args.chunk_size*1000000 # Size is given in MByte, internal calculation is done in Bytes
+    chunk_size = args.chunk_size*1000 # Size is given in KByte, internal calculation is done in Bytes
     
     main_logger = logging.getLogger("Main")
     
