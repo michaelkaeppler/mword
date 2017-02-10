@@ -10,7 +10,7 @@ import argparse
 import logging
 import collections
 from tqdm import trange
-from multiprocessing import Process, Manager
+from multiprocessing import Process, Manager, cpu_count
 import re
 
 musical_regex = re.compile(r'^([a-hs]|cis|dis|fis|gis)+$', flags=(re.IGNORECASE))
@@ -24,9 +24,10 @@ logging.basicConfig(
 
 def get_args():
     parser = argparse.ArgumentParser()
+    cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
     parser.add_argument("-m", "--min-length", default=3, help="Minimum word length to parse")
-    parser.add_argument("-p", "--processes", default=4, help="Number of processes")
+    parser.add_argument("-p", "--processes", default=cpus, help="Number of processes")
     parser.add_argument("-c", "--chunk_size", default=1, help="Size of chunks in MByte, that are read at once")
     return parser.parse_args()
     
