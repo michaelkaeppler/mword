@@ -15,12 +15,6 @@ import re
 
 musical_regex = re.compile(r'^([a-hs]|cis|dis|fis|gis)+$', flags=(re.IGNORECASE))
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-    filename="mwort.log",
-    filemode='w'
-)
 
 def check_positive(value):
     ivalue = int(value)
@@ -32,9 +26,11 @@ def get_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
-    parser.add_argument("-m", "--min-length", type=check_positive, default=3, help="Minimum word length to parse")
+    parser.add_argument("-m", "--minlength", type=check_positive, default=3, help="Minimum word length to parse")
     parser.add_argument("-p", "--processes", type=check_positive, default=cpus, help="Number of processes")
-    parser.add_argument("-c", "--chunk_size", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
+    parser.add_argument("-c", "--chunksize", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
+    parser.add_argument("-l", "--loglevel", type=str, choices=["OFF", "INFO", "DEBUG"], default="INFO", help="Set loglevel")
+    parser.add_argument("-lf", "--logfile", type=str, default="mwort.log", help="Set where to write log messages")
     return parser.parse_args()
     
 def worker(nr, input_queue, mword_list):
@@ -98,9 +94,24 @@ def postprocess_list(mwords, **kwargs):
         
 def main():
     args = get_args()
+    
     fname = args.filename
     processes = args.processes
-    chunk_size = args.chunk_size*1000 # Size is given in KByte, internal calculation is done in Bytes
+    chunk_size = args.chunksize*1000 # Size is given in KByte, internal calculation is done in Bytes    
+    logfile = args.logfile
+    
+    if args.loglevel != "OFF":
+        if args.loglevel == "INFO":
+            loglevel = logging.INFO
+        elif args.loglevel == "DEBUG":
+            loglevel = logging.DEBUG
+        
+        logging.basicConfig(
+        level=loglevel,
+        format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+        filename=logfile,
+        filemode='w'
+        )
     
     main_logger = logging.getLogger("Main")
     
