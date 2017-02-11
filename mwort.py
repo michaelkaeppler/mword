@@ -22,13 +22,19 @@ logging.basicConfig(
     filemode='w'
 )
 
+def check_positive(value):
+    ivalue = int(value)
+    if ivalue <= 0:
+         raise argparse.ArgumentTypeError("{} is an invalid positive int value".format(value))
+    return ivalue
+
 def get_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
-    parser.add_argument("-m", "--min-length", type=int, default=3, help="Minimum word length to parse")
-    parser.add_argument("-p", "--processes", type=int, default=cpus, help="Number of processes")
-    parser.add_argument("-c", "--chunk_size", type=int, default=100, help="Size of chunks in KByte, that are read at once")
+    parser.add_argument("-m", "--min-length", type=check_positive, default=3, help="Minimum word length to parse")
+    parser.add_argument("-p", "--processes", type=check_positive, default=cpus, help="Number of processes")
+    parser.add_argument("-c", "--chunk_size", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
     return parser.parse_args()
     
 def worker(nr, input_queue, mword_list):
