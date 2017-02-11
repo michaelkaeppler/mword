@@ -23,7 +23,7 @@ logging.basicConfig(
 )
 
 def get_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
     parser.add_argument("-m", "--min-length", type=int, default=3, help="Minimum word length to parse")
