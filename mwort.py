@@ -78,22 +78,22 @@ def postprocess_list(mwords, **kwargs):
     minlen = kwargs.get('minlen', 3)
     minocc = kwargs.get('minocc', 1)
     remove_upper = kwargs.get('removeupper', True)
-    mwords_count = collections.Counter(mwords)
+    mwords_counted = collections.Counter(mwords)
     props = {}
-    props['total'] = sum(mwords_count.values())
+    props['total'] = sum(mwords_counted.values())
     # Remove words that 
     # 1. are shorter than minlen
     # 2. occur less frequently than minocc
-    mwords_count = {k:v for k,v in mwords_count.items() if
+    mwords_counted = {k:v for k,v in mwords_counted.items() if
                         (len(k) >= minlen) and (v >= minocc)}
     # Remove words than consist from only uppercase characters
     if remove_upper:
-        mwords_count = {k:v for k,v in mwords_count.items() if
+        mwords_counted = {k:v for k,v in mwords_counted.items() if
                         k.upper() != k}
     if sortorder == 'alphabetic':
-        mwords_unique = sorted(mwords_count)
+        mwords_unique = sorted(mwords_counted)
     props['unique'] = len(mwords_unique)
-    return (mwords_count, mwords_unique, props)
+    return (mwords_counted, mwords_unique, props)
     
         
 def main():
@@ -148,9 +148,14 @@ def main():
             for p in pool:
                 p.join()
                 
-            mwords_count, mwords_unique, props = postprocess_list(mwords)
-            print "Found {} musical {word_des}, {} of them unique".format(props['total'], props['unique'], word_des="word" if props['unique'] < 2 else "words")
-            for k, v in mwords_count.items():
+            mwords_counted, mwords_unique, props = postprocess_list(mwords)
+            mwords_total_count = props['total']
+            mwords_unique_count = props['unique']
+            mwords_total_percent = mwords_total_count * 100.0 / word_count.value()
+            mwords_unique_percent = mwords_unique_count * 100.0 / word_count.value()
+            print "Searched through {} words".format(word_count.value())
+            print "Found {} ({:.1f}%) musical {word_des}, {} ({:.1f}%) of them unique".format(mwords_total_count, mwords_total_percent, mwords_unique_count, mwords_unique_percent, word_des="word" if mwords_total_count < 2 else "words")
+            for k, v in mwords_counted.items():
                 print "{}: {} times".format(k, v)
                                                                             
     else:
