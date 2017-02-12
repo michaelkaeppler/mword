@@ -108,9 +108,9 @@ def main():
         
         logging.basicConfig(
         level=loglevel,
-        format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+        format="%(asctime)s:%(levelname)s:%(name)s:%(message)s",
         filename=logfile,
-        filemode='w'
+        filemode="w"
         )
     
     main_logger = logging.getLogger("Main")
@@ -144,9 +144,9 @@ def main():
                 p.join()
                 
             mwords_count, mwords_unique, props = postprocess_list(mwords)
-            print 'Found {} musical {word_des}, {} of them unique'.format(props['total'], props['unique'], word_des="word" if props['unique'] < 2 else "words")
+            print "Found {} musical {word_des}, {} of them unique".format(props['total'], props['unique'], word_des="word" if props['unique'] < 2 else "words")
             for k, v in mwords_count.items():
-                print '{}: {} times'.format(k, v)
+                print "{}: {} times".format(k, v)
                                                                             
     else:
         print "Can't find file {}, exiting.".format(fname)
