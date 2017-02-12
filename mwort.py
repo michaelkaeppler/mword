@@ -29,7 +29,7 @@ def get_args():
     parser.add_argument("-m", "--minlength", type=check_positive, default=3, help="Minimum word length to parse")
     parser.add_argument("-p", "--processes", type=check_positive, default=cpus, help="Number of processes")
     parser.add_argument("-c", "--chunksize", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
-    parser.add_argument("-l", "--loglevel", type=str, choices=["OFF", "INFO", "DEBUG"], default="INFO", help="Set loglevel")
+    parser.add_argument("-l", "--loglevel", type=str, choices=["OFF", "INFO", "DEBUG"], default="OFF", help="Set loglevel")
     parser.add_argument("-lf", "--logfile", type=str, default="mwort.log", help="Set where to write log messages")
     return parser.parse_args()
     
