@@ -13,6 +13,9 @@ from tqdm import trange
 from multiprocessing import Process, Manager, cpu_count
 import re
 
+# Local imports
+from Counter import Counter
+
 musical_regex = re.compile(r'^([a-hs]|cis|dis|fis|gis)+$', flags=(re.IGNORECASE))
 
 
@@ -33,27 +36,28 @@ def get_args():
     parser.add_argument("-lf", "--logfile", type=str, default="mwort.log", help="Set where to write log messages")
     return parser.parse_args()
     
-def worker(nr, input_queue, mword_list):
+def worker(nr, input_queue, mword_list, word_count):
      logger = logging.getLogger("Process "+str(nr))
      logger.debug("Starting")
      while True:
         queue_item = input_queue.get()
         if queue_item is None:
-            logger.debug("Queue is empty, terminating")
+            logger.debug("Queue is empty, terminating")  
             return
         else:
             chunk_nr, word_string = queue_item
             logger.debug("Getting chunk {} from queue".format(chunk_nr))
             words = word_string.split()
+            word_count.increment(len(words))
             logger.debug("Split chunk {} in {} {word_des}".format(chunk_nr, len(words), word_des="word" if len(words) < 2 else "words"))
             mwords = [word for word in words if musical_regex.match(word)]
             logger.debug("Got {} musical {word_des}".format(len(mwords), word_des="word" if len(words) < 2 else "words"))
             mword_list.extend(mwords)
     
-def get_worker_pool(num, worker, input_queue, mword_list):
+def get_worker_pool(num, worker, input_queue, mword_list, word_count):
     pool = []
     for i in xrange(num):
-        p = Process(target=worker, args=(i, input_queue, mword_list))
+        p = Process(target=worker, args=(i, input_queue, mword_list, word_count))
         p.start()
         pool.append(p)
     return pool
@@ -128,9 +132,10 @@ def main():
             print "Splitting file in {} {chunk_des} of size {:,} bytes".format(chunks, chunk_size, chunk_des="chunk" if chunks < 2 else "chunks")
             manager = Manager()
             mwords = manager.list()
+            word_count = Counter()
             work = manager.Queue(processes)
             print "Starting {} {proc_des}...".format(processes, proc_des="process" if processes < 2 else "processes")
-            pool = get_worker_pool(processes, worker, work, mwords)
+            pool = get_worker_pool(processes, worker, work, mwords, word_count)
             
             for chunk_nr in trange(1, chunks+1):
                 chunk = get_chunk(f, chunk_size)
