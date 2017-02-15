@@ -29,9 +29,12 @@ def get_args():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     cpus = cpu_count()
     parser.add_argument("filename", help="File that shall be parsed")
-    parser.add_argument("-m", "--minlength", type=check_positive, default=3, help="Minimum word length to parse")
     parser.add_argument("-p", "--processes", type=check_positive, default=cpus, help="Number of processes")
     parser.add_argument("-c", "--chunksize", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
+    parser.add_argument("-m", "--minlength", type=check_positive, default=3, help="Minimum length words must have")    
+    parser.add_argument("-o", "--minocc", type=check_positive, default=1, help="Minimal occurrences words must have")    
+    parser.add_argument("-s", "--sortorder", type=str, choices=["alphabetic", "occurence", "importance"], default="alphabetic", help="Set sort order")
+    parser.add_argument("-ru", "--removeupper", action="store_true", help="Remove words that consist only of UPPERCASE characters")
     parser.add_argument("-l", "--loglevel", type=str, choices=["OFF", "INFO", "DEBUG"], default="OFF", help="Set loglevel")
     parser.add_argument("-lf", "--logfile", type=str, default="mwort.log", help="Set where to write log messages")
     return parser.parse_args()
@@ -94,8 +97,11 @@ def postprocess_list(mwords, **kwargs):
     
     if sortorder == 'alphabetic':
         mwords_list.sort()
-    elif sortorder == 'occurence':
+    elif sortorder == 'occurrence':
         mwords_list.sort(key=lambda item: item[1])
+    elif sortorder == 'importance':
+        # Multiply word length with occurrences
+        mwords_list.sort(key=lambda item: len(item[0]) * item[1])
         
     props['unique'] = len(mwords_list)
     return (mwords_list, props)
@@ -108,6 +114,10 @@ def main():
     processes = args.processes
     chunk_size = args.chunksize*1000 # Size is given in KByte, internal calculation is done in Bytes    
     logfile = args.logfile
+    sortorder = args.sortorder
+    minlen = args.minlength
+    minocc = args.minocc
+    remove_upper = args.removeupper
     
     if args.loglevel != "OFF":
         if args.loglevel == "INFO":
@@ -153,7 +163,7 @@ def main():
             for p in pool:
                 p.join()
                 
-            mwords_list, props = postprocess_list(mwords)
+            mwords_list, props = postprocess_list(mwords, sortorder=sortorder, minlen=minlen, minocc=minocc, remove_upper=remove_upper)
             mwords_total_count = props['total']
             mwords_unique_count = props['unique']
             mwords_total_percent = mwords_total_count * 100.0 / word_count.value()
