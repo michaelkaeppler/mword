@@ -89,12 +89,16 @@ def postprocess_list(mwords, **kwargs):
         allowed_mword = lambda k,v: ((len (k) >= minlen) and (v >= minocc) and (k.upper() != k))
     else:
         allowed_mword = lambda k,v: ((len (k) >= minlen) and (v >= minocc))
-    mwords_counted = {k:v for k,v in mwords_counted.items() if allowed_mword(k, v)}
+    
+    mwords_list = [(k, v) for k,v in mwords_counted.items() if allowed_mword(k, v)]
     
     if sortorder == 'alphabetic':
-        mwords_unique = sorted(mwords_counted)
-    props['unique'] = len(mwords_unique)
-    return (mwords_counted, props)
+        mwords_list.sort()
+    elif sortorder == 'occurence':
+        mwords_list.sort(key=lambda item: item[1])
+        
+    props['unique'] = len(mwords_list)
+    return (mwords_list, props)
     
         
 def main():
@@ -149,15 +153,15 @@ def main():
             for p in pool:
                 p.join()
                 
-            mwords_counted, props = postprocess_list(mwords)
+            mwords_list, props = postprocess_list(mwords)
             mwords_total_count = props['total']
             mwords_unique_count = props['unique']
             mwords_total_percent = mwords_total_count * 100.0 / word_count.value()
             mwords_unique_percent = mwords_unique_count * 100.0 / word_count.value()
             print "Searched through {} words".format(word_count.value())
             print "Found {} ({:.1f}%) musical {word_des}, {} ({:.1f}%) of them unique".format(mwords_total_count, mwords_total_percent, mwords_unique_count, mwords_unique_percent, word_des="word" if mwords_total_count < 2 else "words")
-            for k, v in mwords_counted.items():
-                print "{}: {} times".format(k, v)
+            for mword in mwords_list:
+                print "{}: {} times".format(mword[0], mword[1])
                                                                             
     else:
         print "Can't find file {}, exiting.".format(fname)
