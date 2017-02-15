@@ -169,9 +169,11 @@ def main():
             mwords_total_percent = mwords_total_count * 100.0 / word_count.value()
             mwords_unique_percent = mwords_unique_count * 100.0 / word_count.value()
             print "Searched through {} words".format(word_count.value())
-            print "Found {} ({:.1f}%) musical {word_des}, {} ({:.1f}%) of them unique".format(mwords_total_count, mwords_total_percent, mwords_unique_count, mwords_unique_percent, word_des="word" if mwords_total_count < 2 else "words")
+            print "Found {} ({:.1f}%) musical {word_des}, {} ({:.2f}%) of them unique".format(mwords_total_count, mwords_total_percent, mwords_unique_count, mwords_unique_percent, word_des="word" if mwords_total_count < 2 else "words")
+            print "+++ BEGIN MUSICAL WORDS +++"
             for mword in mwords_list:
-                print "{}: {} times".format(mword[0], mword[1])
+                print "{} : {} times".format(mword[0], mword[1])
+            print "+++ END MUSICAL WORDS +++"
                                                                             
     else:
         print "Can't find file {}, exiting.".format(fname)
