@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument("-c", "--chunksize", type=check_positive, default=100, help="Size of chunks in KByte, that are read at once")
     parser.add_argument("-m", "--minlength", type=check_positive, default=3, help="Minimum length words must have")    
     parser.add_argument("-o", "--minocc", type=check_positive, default=1, help="Minimal occurrences words must have")    
-    parser.add_argument("-s", "--sortorder", type=str, choices=["alphabetic", "occurence", "importance"], default="alphabetic", help="Set sort order")
+    parser.add_argument("-s", "--sortorder", type=str, choices=["alphabetic", "occurrence", "importance"], default="alphabetic", help="Set sort order")
     parser.add_argument("-ru", "--removeupper", action="store_true", help="Remove words that consist only of UPPERCASE characters")
     parser.add_argument("-l", "--loglevel", type=str, choices=["OFF", "INFO", "DEBUG"], default="OFF", help="Set loglevel")
     parser.add_argument("-lf", "--logfile", type=str, default="mwort.log", help="Set where to write log messages")
