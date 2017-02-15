@@ -84,12 +84,13 @@ def postprocess_list(mwords, **kwargs):
     # Remove words that 
     # 1. are shorter than minlen
     # 2. occur less frequently than minocc
-    mwords_counted = {k:v for k,v in mwords_counted.items() if
-                        (len(k) >= minlen) and (v >= minocc)}
-    # Remove words than consist from only uppercase characters
+    # 3. If remove_upper is True: remove words that consist from only uppercase characters
     if remove_upper:
-        mwords_counted = {k:v for k,v in mwords_counted.items() if
-                        k.upper() != k}
+        allowed_mword = lambda k,v: ((len (k) >= minlen) and (v >= minocc) and (k.upper() != k))
+    else:
+        allowed_mword = lambda k,v: ((len (k) >= minlen) and (v >= minocc))
+    mwords_counted = {k:v for k,v in mwords_counted.items() if allowed_mword(k, v)}
+    
     if sortorder == 'alphabetic':
         mwords_unique = sorted(mwords_counted)
     props['unique'] = len(mwords_unique)
