@@ -93,7 +93,7 @@ def postprocess_list(mwords, **kwargs):
     if sortorder == 'alphabetic':
         mwords_unique = sorted(mwords_counted)
     props['unique'] = len(mwords_unique)
-    return (mwords_counted, mwords_unique, props)
+    return (mwords_counted, props)
     
         
 def main():
@@ -148,7 +148,7 @@ def main():
             for p in pool:
                 p.join()
                 
-            mwords_counted, mwords_unique, props = postprocess_list(mwords)
+            mwords_counted, props = postprocess_list(mwords)
             mwords_total_count = props['total']
             mwords_unique_count = props['unique']
             mwords_total_percent = mwords_total_count * 100.0 / word_count.value()
