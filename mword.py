@@ -14,10 +14,10 @@ from tqdm import trange
 from multiprocessing import Manager
 
 # Local imports
-from .counter import Counter
-from .worker import worker, get_worker_pool
-from .argparser import get_args
-from .postprocess import postprocess_list
+from mword.counter import Counter
+from mword.worker import worker, get_worker_pool
+from mword.argparser import get_args
+from mword.postprocess import postprocess_list
         
 def get_chunk(f, size):
     chunk = f.read(size)

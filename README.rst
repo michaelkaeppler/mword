@@ -19,7 +19,7 @@ The following steps are carried out during the search process:
 
 Usage
 ------
-python mword.py tests/files/neverending_story.txt
+python mword.py tests\files\neverending_story.txt
 
 Some options:
 
