@@ -5,3 +5,9 @@ __pycache__/
 
 # Log files
 *.log
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools.
+/*.egg-info
