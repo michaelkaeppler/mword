@@ -7,6 +7,7 @@ Created on Tue Jan 31 21:53:56 2017
 from __future__ import print_function
 from __future__ import absolute_import
 
+from builtins import range
 from os.path import getsize, isfile
 import logging
 from tqdm import trange
@@ -77,7 +78,7 @@ def main():
                 work.put((chunk_nr, chunk))
                 main_logger.debug("Working on chunk {} of {}".format(chunk_nr, chunk_size))
             
-            for i in xrange(processes):
+            for i in range(processes):
                 work.put(None) # Send termination signal for each process
             
             for p in pool:

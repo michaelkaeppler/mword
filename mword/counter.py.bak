@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 # Source: http://eli.thegreenplace.net/2012/01/04/shared-counter-with-pythons-multiprocessing
 
-from builtins import object
 from multiprocessing import Value, Lock
 
 class Counter(object):
