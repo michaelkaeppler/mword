@@ -15,4 +15,5 @@ setup(name='mword',
       license='GNU GPLv3',
       packages=['mword'],
       install_requires=['argparse', 'multiprocessing', 'logging', 'tqdm'],
+      scripts=['bin/mword'],
       zip_safe=False)
