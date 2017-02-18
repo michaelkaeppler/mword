@@ -57,7 +57,7 @@ def main():
     
     if isfile(fname):
         fsize = getsize(fname) # Returns size in bytes
-        with open(fname) as f:
+        with open(fname, encoding="latin1") as f:
             print("Opened file {}, size {:,} bytes".format(fname, fsize)) 
             chunks = fsize // chunk_size
             if fsize % chunk_size != 0:
