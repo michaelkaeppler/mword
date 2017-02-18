@@ -41,9 +41,8 @@ def postprocess_list(mwords, **kwargs):
         mwords_list.sort()
     elif sortorder == 'occurrence':
         mwords_list.sort(key=lambda item: item[1])
-    elif sortorder == 'importance':
-        # Multiply word length with occurrences
-        mwords_list.sort(key=lambda item: len(item[0]) * item[1])
+    elif sortorder == 'length':
+        mwords_list.sort(key=lambda item: len(item[0]))
         
     props['unique'] = len(mwords_list)
     return (mwords_list, props)
